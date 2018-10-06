@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Smart Locker</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="ISO10646">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+	<h1 align="center">Smart Locker</h1>
+
+	<ul class="topnav">
+		<li><a href="{{ url_for('home') }}">Home</a></li>
+		<li><a href="{{ url_for('login') }}">Log in</a></li>
+		<li><a href="{{ url_for('items') }}">Register items</a></li>
+        <li><a href="{{ url_for('status') }}">Item Status</a></li>
+        <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+        <li><a class="active" href="{{ url_for('notifications') }}">Notifications</a></li>
+	</ul>
+
+    <div class="container">
+        <d1>
+            <dt>Notifications:</dt>
+        </d1>
+    </div>
+</body>
+</html>
