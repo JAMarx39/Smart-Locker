@@ -14,8 +14,8 @@
 
 	<ul class="topnav">
 		<li><a href="{{ url_for('home') }}">Home</a></li>
-		<li><a class="active" href="{{ url_for('login') }}">Log in</a></li>
-        <li><a href="{{ url_for('register') }}">Create Account</a></li>
+		<li><a href="{{ url_for('login') }}">Log in</a></li>
+        <li><a class="active" href="{{ url_for('register') }}">Create Account</a></li>
 		<li><a href="{{ url_for('items') }}">Register items</a></li>
         <li><a href="{{ url_for('status') }}">Item Status</a></li>
         <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
@@ -39,8 +39,14 @@
               <dd><input type="text" name="username" size="30" value="">
               <dt>Password:
               <dd><input type="password" name="password" size="30">
+              <dt>Password <small>(repeat)</small>:
+              <dd><input type="password" name="password2" size="30">
+              <dt>First Name:
+              <dd><input type="text" name="fName" size="30" value="">
+              <dt>Last Name:
+              <dd><input type="text" name="lName" size="30" value="">
             </dl>
-            <div class="actions"><input type="submit" value="Sign In"></div>
+            <div class="actions"><input type="submit" value="Create Account"></div>
         </form>
     </div>
 </body>

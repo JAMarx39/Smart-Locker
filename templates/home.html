@@ -15,12 +15,26 @@
 
 	<ul class="topnav">
 		<li><a class="active" href="{{ url_for('login') }}">Home</a></li>
-		<li><a href="{{ url_for('login') }}">Log in</a></li>
+		{% if user %}
+		{% else %}
+			<li><a href="{{ url_for('login') }}">Log in</a></li>
+			<li><a href="{{ url_for('register') }}">Create Account</a></li>
+		{% endif %}
 		<li><a href="{{ url_for('items') }}">Register items</a></li>
         <li><a href="{{ url_for('status') }}">Item Status</a></li>
         <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
         <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 	</ul>
+
+	{% with flashes = get_flashed_messages() %}
+		{% if flashes %}
+		  <ul class="flashes">
+		  {% for message in flashes %}
+			<li>{{ message }}
+		  {% endfor %}
+		  </ul>
+		{% endif %}
+  	{% endwith %}
 
 	<div style="padding:0 16px;"  class="container-fluid">
 		<h2>Home</h2>
