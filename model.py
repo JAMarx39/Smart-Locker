@@ -17,7 +17,7 @@ class User(db.Model):
     password = db.Column(db.String(64), nullable=False)
     firstName = db.Column(db.String(24), nullable=False)
     lastName = db.Column(db.String(24), nullable=False)
-    # userType = db.Column(db.Integer, db.ForeignKey("usertype.id"), nullable=False)
+    #userType = db.Column(db.Integer, db.ForeignKey("usertype.id"), nullable=False)
 
     def __init__(self, username, password, firstName, lastName):
         self.username = username

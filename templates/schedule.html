@@ -19,10 +19,13 @@
 			<li><a href="{{ url_for('login') }}">Log in</a></li>
 			<li><a href="{{ url_for('register') }}">Create Account</a></li>
 		{% endif %}
-		<li><a href="{{ url_for('items') }}">Register items</a></li>
-        <li><a href="{{ url_for('status') }}">Item Status</a></li>
-        <li><a class="active" href="{{ url_for('schedule') }}">Schedule</a></li>
-        <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+		{% if user %}
+            <li><a href="{{ url_for('items') }}">Register items</a></li>
+            <li><a href="{{ url_for('status') }}">Item Status</a></li>
+            <li><a class="active" href="{{ url_for('schedule') }}">Schedule</a></li>
+            <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+			<li><a href="{{ url_for('logout') }}">Log out</a></li>
+		{% endif %}
 	</ul>
 
     {% with flashes = get_flashed_messages() %}
@@ -35,8 +38,47 @@
 		{% endif %}
   	{% endwith %}
 
-    <div class="">
-
+    <div class="container">
+		<table id="calendar">
+			<tr>
+				<td></td>
+				<td>Sunday</td>
+				<td>Monday</td>
+				<td>Tuesday</td>
+				<td>Wednesday</td>
+				<td>Thursday</td>
+				<td>Friday</td>
+				<td>Saturday</td>
+				<td>Sunday</td>
+			</tr>
+			<tr>
+				<td>7:00</td>
+			</tr>
+			<tr>
+				<td>8:00</td>
+			</tr>
+			<tr>
+				<td>9:00</td>
+			</tr>
+			<tr>
+				<td>10:00</td>
+			</tr>
+			<tr>
+				<td>11:00</td>
+			</tr>
+			<tr>
+				<td>12:00</td>
+			</tr>
+			<tr>
+				<td>1:00</td>
+			</tr>
+			<tr>
+				<td>2:00</td>
+			</tr>
+			<tr>
+				<td>3:00</td>
+			</tr>
+		</table>
     </div>
 </body>
 </html>

@@ -4,8 +4,7 @@ from werkzeug import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 
-#from model import db, UserType, User, Scanner, Class, Item, Pattern, Alert, Messages
-from model import db, User
+from model import db, UserType, User, Scanner, Class, Item, Pattern, Alert, Messages
 
 
 SECRET_KEY = 'development key'
@@ -21,12 +20,6 @@ db.init_app(app)
 def initdb_command():
     """Creates the database tables."""
     db.create_all()
-    user = User.query.filter_by(username="owner").first()
-    if user is None:
-        db.session.add(
-            User(username='owner', password=generate_password_hash("pass"), firstName="Bob", lastName="Smith"))
-        db.session.commit()
-        user = None
     print('Initialized the database.')
 
 
@@ -44,6 +37,8 @@ def home():
 
 @app.route('/login/', methods=["GET", "POST"])
 def login():
+    error = None
+
     if g.user:
         return redirect(url_for('home'))
 
@@ -58,7 +53,7 @@ def login():
             session['user_id'] = user.id
             return redirect(url_for('home'))
 
-    return render_template("login.html")
+    return render_template("login.html", error=error)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -67,6 +62,7 @@ def register():
     error = None
     if request.method == 'POST':
         rv = User.query.filter_by(username=request.form['username']).first()
+        error = None
         if not request.form['username']:
             error = 'You have to enter a username'
         elif not request.form['fName']:
@@ -86,7 +82,7 @@ def register():
             db.session.commit()
             flash('You were successfully registered and can login now')
             return redirect(url_for('login'))
-    return render_template('register.html')
+    return render_template('register.html', error=error)
 
 
 @app.route('/items')
@@ -107,6 +103,13 @@ def schedule():
 @app.route('/notifications')
 def notifications():
     return render_template("notifications.html", user=g.user)
+
+
+@app.route('/logout')
+def logout():
+    flash('You were logged out')
+    session.pop('user_id', None)
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':

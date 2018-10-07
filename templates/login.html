@@ -16,10 +16,6 @@
 		<li><a href="{{ url_for('home') }}">Home</a></li>
 		<li><a class="active" href="{{ url_for('login') }}">Log in</a></li>
         <li><a href="{{ url_for('register') }}">Create Account</a></li>
-		<li><a href="{{ url_for('items') }}">Register items</a></li>
-        <li><a href="{{ url_for('status') }}">Item Status</a></li>
-        <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
-        <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 	</ul>
 
     {% with flashes = get_flashed_messages() %}
@@ -31,6 +27,8 @@
 		  </ul>
 		{% endif %}
   	{% endwith %}
+
+    {% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
 
     <div class="container">
         <form class="form" action="" method="post">

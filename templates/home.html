@@ -20,10 +20,13 @@
 			<li><a href="{{ url_for('login') }}">Log in</a></li>
 			<li><a href="{{ url_for('register') }}">Create Account</a></li>
 		{% endif %}
-		<li><a href="{{ url_for('items') }}">Register items</a></li>
-        <li><a href="{{ url_for('status') }}">Item Status</a></li>
-        <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
-        <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+		{% if user %}
+			<li><a href="{{ url_for('items') }}">Register items</a></li>
+			<li><a href="{{ url_for('status') }}">Item Status</a></li>
+			<li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+			<li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+			<li><a href="{{ url_for('logout') }}">Log out</a></li>
+		{% endif %}
 	</ul>
 
 	{% with flashes = get_flashed_messages() %}
@@ -41,8 +44,11 @@
 		<div class="row">
 		<div class="col-md-6" id="aboutleft">
 			<div class="container vertical-center" id="abouttext">
-				<p>Home page here</p>
+				<p>About Smart Locker</p>
 			</div>
+		</div>
+		<div class="col-md-6" id="aboutright">
+          <img id="lockerPhoto" class="img-responsive center-block" src="static/locker.jpg" alt="Locker">
 		</div>
 		</div>
 	</div>

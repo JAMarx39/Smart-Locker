@@ -123,6 +123,13 @@ input[type=submit]:hover {
     padding: 20px;
 }
 
-.form{
+table
+{
+    border-collapse: collapse;
+    width: 100%;
+}
 
+table td, table th
+{
+    padding: 10px;
 }
