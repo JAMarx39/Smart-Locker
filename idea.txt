@@ -1,0 +1,8 @@
+Ideas to Implement into the Project:
+  
+  Software:
+    - Sick Days (squash alerts on student request)
+    - 
+    
+  Hardware:
+  
