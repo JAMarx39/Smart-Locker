@@ -20,6 +20,10 @@ db.init_app(app)
 def initdb_command():
     """Creates the database tables."""
     db.create_all()
+    db.session.add(
+        User(username='ADMIN', password=generate_password_hash('ADMIN'),
+             firstName='ADMIN', lastName='ADMIN', userType='a'))
+    db.session.commit()
     print('Initialized the database.')
 
 
@@ -78,16 +82,29 @@ def register():
         else:
             db.session.add(
                 User(username=request.form['username'], password=generate_password_hash(request.form['password']),
-                     firstName=request.form['fName'], lastName=request.form['lName']))
+                     firstName=request.form['fName'], lastName=request.form['lName'], userType='s'))
             db.session.commit()
             flash('You were successfully registered and can login now')
             return redirect(url_for('login'))
     return render_template('register.html', error=error)
 
 
-@app.route('/items')
+@app.route('/items', methods=["GET", "POST"])
 def items():
-    return render_template("items.html", user=g.user)
+    error = None
+    if request.method == 'POST':
+        error = None
+        if not request.form['name']:
+            error = 'You have to enter a item name'
+        elif not request.form['rfidNum']:
+            error = 'You have to enter the RFID number'
+        else:
+            db.session.add(
+                Item(name=request.form['name'], tagID=request.form['rfidNum'], userID=session['user_id']))
+            db.session.commit()
+            flash('You were successfully added an item')
+    items = Item.query.filter_by(userID=session['user_id']).all()
+    return render_template("items.html", user=g.user, error=error, items=items)
 
 
 @app.route('/status')

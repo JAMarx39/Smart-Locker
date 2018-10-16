@@ -17,13 +17,14 @@ class User(db.Model):
     password = db.Column(db.String(64), nullable=False)
     firstName = db.Column(db.String(24), nullable=False)
     lastName = db.Column(db.String(24), nullable=False)
-    #userType = db.Column(db.Integer, db.ForeignKey("usertype.id"), nullable=False)
+    userType = db.Column(db.CHAR, nullable=False)
 
-    def __init__(self, username, password, firstName, lastName):
+    def __init__(self, username, password, firstName, lastName, userType):
         self.username = username
         self.password = password
         self.firstName = firstName
         self.lastName = lastName
+        self.userType = userType
 
 
 class Scanner(db.Model):
@@ -57,11 +58,13 @@ class Item(db.Model):
     tagID = db.Column(db.String(64), nullable=False)
     name = db.Column(db.String(24), nullable=False)
     classID = db.Column(db.Integer, db.ForeignKey("class.id"), nullable=True)
+    userID = db.Column(db.Integer, nullable=False)
 
-    def __init__(self):
-        self.tagID = ""
-        self.name = ""
+    def __init__(self, name, tagID, userID):
+        self.name = name
+        self.tagID = tagID
         self.classID = ""
+        self.userID = userID
 
 
 class Pattern(db.Model):

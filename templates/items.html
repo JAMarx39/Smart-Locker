@@ -38,6 +38,8 @@
 		{% endif %}
   	{% endwith %}
 
+	{% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
+
     <div class="container">
         <form class="form" action="" method="post">
             <dl>
@@ -51,9 +53,12 @@
     </div>
 
     <div class="container">
-        <d1>
-            <dt>Items:</dt>
-        </d1>
+		Items:
+		<ul>
+		{% for item in items %}
+		<li>{{ item.name }} : {{ item.tagID }}
+		{% endfor %}
+		</ul>
     </div>
 </body>
 </html>
