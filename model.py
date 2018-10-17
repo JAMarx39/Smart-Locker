@@ -72,8 +72,8 @@ class Pattern(db.Model):
     userID = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     itemID = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     dayOfWeek = db.Column(db.String(9), nullable=False)
-    # startTime = db.Column(ARRAY[DateTime])
-    # presentItem = db.Column(ARRAY[Integer])
+    startTime = db.Column(db.String(130), nullable=False)
+    presentItem = db.Column(db.String(52), nullable=False)
 
     def __init__(self):
         self.userID = 0
