@@ -122,6 +122,11 @@ def notifications():
     return render_template("notifications.html", user=g.user)
 
 
+@app.route('/register_class')
+def register_class():
+    return render_template("register_class.html", user=g.user)
+
+
 @app.route('/logout')
 def logout():
     flash('You were logged out')
