@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, session, url_for, redirect, render_template, abort, g, flash
 from werkzeug import check_password_hash, generate_password_hash
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -80,13 +81,20 @@ def register():
         elif rv is not None:
             error = 'The username is already taken'
         else:
-            db.session.add(
-                User(username=request.form['username'], password=generate_password_hash(request.form['password']),
-                     firstName=request.form['fName'], lastName=request.form['lName'], userType='s'))
-            db.session.commit()
-            flash('You were successfully registered and can login now')
+            if g.user:
+                db.session.add(
+                    User(username=request.form['username'], password=generate_password_hash(request.form['password']),
+                         firstName=request.form['fName'], lastName=request.form['lName'], userType='t'))
+                db.session.commit()
+                flash('You successfully created a teacher account')
+            else:
+                db.session.add(
+                    User(username=request.form['username'], password=generate_password_hash(request.form['password']),
+                         firstName=request.form['fName'], lastName=request.form['lName'], userType='s'))
+                db.session.commit()
+                flash('You were successfully registered and can login now')
             return redirect(url_for('login'))
-    return render_template('register.html', error=error)
+    return render_template('register.html', user=g.user, error=error)
 
 
 @app.route('/items', methods=["GET", "POST"])
@@ -122,9 +130,37 @@ def notifications():
     return render_template("notifications.html", user=g.user)
 
 
-@app.route('/register_class')
+@app.route('/register_class', methods=["GET", "POST"])
 def register_class():
-    return render_template("register_class.html", user=g.user)
+    error = None
+    if request.method == 'POST':
+        error = None
+        if not request.form['className']:
+            error = 'You have to enter a class name'
+        elif not request.form['code']:
+            error = 'You have to enter a course code'
+        elif not request.form['teacherName']:
+            error = 'You have to enter a teacher\'s name'
+        elif not request.form['startHours'] or not request.form['startHours']:
+            error = 'You have to enter the start time'
+        elif not request.form['endHours'] or not request.form['endHours']:
+            error = 'You have to enter the end time'
+        else:
+            teacher = User.query.filter_by(username=request.form['teacherName']).first()
+            if teacher and teacher.userType == "t":
+                timeStart = request.form['startHours'] + request.form['startHours']
+                timeEnd = request.form['endHours'] + request.form['endHours']
+                if timeStart < timeEnd:
+                    db.session.add(
+                        Class(name=request.form['className'], teacherID=teacher.id, startTime=timeStart,
+                              endTime=timeEnd))
+                    db.session.commit()
+                    flash('You were successfully added a class')
+                else:
+                    error="The end time must be later than the start time"
+            else:
+                error="That teacher username does not exist"
+    return render_template("register_class.html", user=g.user, error=error)
 
 
 @app.route('/logout')

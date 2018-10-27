@@ -20,10 +20,9 @@
 			<li><a href="{{ url_for('register') }}">Create Account</a></li>
 		{% endif %}
         {% if user %}
-            <li><a class="active" href="{{ url_for('items') }}">Register items</a></li>
-            <li><a href="{{ url_for('status') }}">Item Status</a></li>
-            <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
-            <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+			<li><a href="{{ url_for('register') }}">Register Teacher</a></li>
+			<li><a class="active" href="{{ url_for('register_class') }}">Register Class</a></li>
+			<li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 			<li><a href="{{ url_for('logout') }}">Log out</a></li>
 		{% endif %}
 	</ul>
@@ -47,6 +46,8 @@
               <dd><input type="text" name="className" size="30" value="">
               <dt>Course Code:
               <dd><input type="text" name="code" size="30">
+              <dt>Teacher username:
+              <dd><input type="text" name="teacherName" size="30">
               <dt>Start Time:
                 <dd><select name="startHours">
                     <option value="07">07 (7am)</option>

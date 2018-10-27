@@ -14,8 +14,15 @@
 
 	<ul class="topnav">
 		<li><a href="{{ url_for('home') }}">Home</a></li>
-		<li><a href="{{ url_for('login') }}">Log in</a></li>
-        <li><a class="active" href="{{ url_for('register') }}">Create Account</a></li>
+		{% if user %}
+            <li><a class="active" href="{{ url_for('register') }}">Register Teacher</a></li>
+			<li><a href="{{ url_for('register_class') }}">Register Class</a></li>
+			<li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+			<li><a href="{{ url_for('logout') }}">Log out</a></li>
+		{% else %}
+			<li><a href="{{ url_for('login') }}">Log in</a></li>
+			<li><a class="active" href="{{ url_for('register') }}">Create Account</a></li>
+		{% endif %}
 	</ul>
 
     {% with flashes = get_flashed_messages() %}

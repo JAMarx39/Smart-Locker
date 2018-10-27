@@ -14,18 +14,27 @@
 	<h1 align="center">Smart Locker</h1>
 
 	<ul class="topnav">
-		<li><a class="active" href="{{ url_for('login') }}">Home</a></li>
+		<li><a class="active" href="{{ url_for('home') }}">Home</a></li>
 		{% if user %}
 		{% else %}
 			<li><a href="{{ url_for('login') }}">Log in</a></li>
 			<li><a href="{{ url_for('register') }}">Create Account</a></li>
 		{% endif %}
-		{% if user %}
+		{% if user.userType == "s" %}
 			<li><a href="{{ url_for('items') }}">Register items</a></li>
 			<li><a href="{{ url_for('status') }}">Item Status</a></li>
 			<li><a href="{{ url_for('schedule') }}">Schedule</a></li>
 			<li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+			<li><a href="{{ url_for('logout') }}">Log out</a></li>
+        {% elif user.userType == "t" %}
+			<li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+			<li><a href="{{ url_for('notifications') }}">Classes</a></li>
+			<li><a href="{{ url_for('register_class') }}">Send Alert</a></li>
+			<li><a href="{{ url_for('logout') }}">Log out</a></li>
+        {% elif user.userType == "a" %}
+			<li><a href="{{ url_for('register') }}">Register Teacher</a></li>
 			<li><a href="{{ url_for('register_class') }}">Register Class</a></li>
+			<li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 			<li><a href="{{ url_for('logout') }}">Log out</a></li>
 		{% endif %}
 	</ul>

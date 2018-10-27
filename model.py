@@ -40,17 +40,16 @@ class Scanner(db.Model):
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(24), nullable=False)
-    location = db.Column(db.String(24), nullable=False)
+    location = db.Column(db.String(24), nullable=True)
     teacherID = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    startTime = db.Column(db.DateTime, nullable=False)
-    endTime = db.Column(db.DateTime, nullable=False)
+    startTime = db.Column(db.String(24), nullable=False)
+    endTime = db.Column(db.String(24), nullable=False)
 
-    def __init__(self):
-        self.name = ""
-        self.location = ""
-        self.teacherID = 0
-        self.startTime = '1000-01-01 00:00:00.000000'
-        self.endTime = '1000-01-01 00:00:00.000000'
+    def __init__(self, name, teacherID, startTime, endTime):
+        self.name = name
+        self.teacherID = teacherID
+        self.startTime = startTime
+        self.endTime = endTime
 
 
 class Item(db.Model):
