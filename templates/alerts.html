@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Smart Locker</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="ISO10646">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+	<h1 align="center">Smart Locker</h1>
+
+	<ul class="topnav">
+		<li><a href="{{ url_for('home') }}">Home</a></li>
+		{% if user %}
+		{% else %}
+			<li><a href="{{ url_for('login') }}">Log in</a></li>
+			<li><a href="{{ url_for('register') }}">Create Account</a></li>
+		{% endif %}
+        {% if user %}
+            <li><a class="active" href="{{ url_for('items') }}">Register items</a></li>
+            <li><a href="{{ url_for('status') }}">Item Status</a></li>
+            <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+            <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
+			<li><a href="{{ url_for('logout') }}">Log out</a></li>
+		{% endif %}
+	</ul>
+
+    {% with flashes = get_flashed_messages() %}
+		{% if flashes %}
+		  <ul class="flashes">
+		  {% for message in flashes %}
+			<li>{{ message }}
+		  {% endfor %}
+		  </ul>
+		{% endif %}
+  	{% endwith %}
+
+	{% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
+
+    <div class="container">
+        <h2>All Unchecked Alerts</h2>
+            <ul>
+            {% for item in alertNotHandled %}
+                <li>
+                    Message: {{ item.message }}
+                    </br>
+                    Time: {{ item.time }}
+                </li>
+            {% endfor %}
+            </ul>
+
+        <h2>All Approved Alerts</h2>
+            <ul>
+            {% for item in alertUserApproved %}
+                <li>
+                    Message: {{ item.message }}
+                    </br>
+                    Time: {{ item.time }}
+                </li>
+            {% endfor %}
+            </ul>
+
+
+        <h2>All Concerning Alerts</h2>
+            <ul>
+            {% for item in alertForConcern %}
+                <li>
+                    Message: {{ item.message }}
+                    </br>
+                    Time: {{ item.time }}
+                </li>
+            {% endfor %}
+            </ul>
+    </div>
+
+    <div class="container">
+        <form class="form" action="" method="post">
+            <dt>
+                <dt>Alert:
+                    <select name="item">
+                    {% for item in allAlerts %}
+                        <option value={{ item.id }}>{{ item.message }}</option>
+                    {% endfor %}
+                    </select>
+                </dt>
+                <dt> Status
+                  <dd>
+                    <select name="found">
+                        <option value="1">Unchecked</option>
+                        <option value="2">User Approved</option>
+                        <option value="3">Cause for Concern</option>
+                    </select>
+                  </dd>
+                </dt>
+            <div class="actions"><input type="submit" value="Add item"></div>
+        </form>
+    </div>
+</body>
+</html>
