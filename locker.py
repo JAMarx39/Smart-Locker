@@ -145,13 +145,36 @@ def schedule():
 
 @app.route('/notifications')
 def notifications():
-    return render_template("notifications.html", user=g.user)
+    student = User.query.filter_by(id=session['user_id']).first()
+    courses = student.classes
+    messages = []
+    for course in courses:
+        messages.append((course.messages, course.name))
+    return render_template("notifications.html", user=g.user, notifications=messages)
 
 
-@app.route('/classes')
+@app.route('/classes', methods=["GET", "POST"])
 def classes():
-    classes = Class.query.filter_by(teacherID=session['user_id']).all()
-    return render_template("classes.html", user=g.user, classes=classes)
+    error = None
+    if request.method == 'POST':
+        error = None
+        if not request.form['code']:
+            error = 'You have to enter a course code'
+        elif not request.form['message']:
+            error = 'You did not enter an alert'
+        else:
+            teacher = User.query.filter_by(id=session['user_id']).first()
+            course = Class.query.filter_by(code=request.form['code']).first()
+            if course.teacherID == teacher.id:
+                message = Messages(message=request.form['message'], course=course.id)
+                db.session.add(message)
+                course.messages.append(message)
+                db.session.commit()
+                flash('You successfully sent an alert')
+            else:
+                error = 'Not a valid course code'
+    classlist = Class.query.filter_by(teacherID=session['user_id']).all()
+    return render_template("classes.html", user=g.user, error=error, classes=classlist)
 
 
 @app.route('/register_class', methods=["GET", "POST"])

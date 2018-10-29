@@ -46,6 +46,11 @@
     <div class="container">
         <d1>
             <dt>Notifications:</dt>
+			<ul>
+			{% for notification, class in notifications %}
+			<li>{{ notification.message }}  - {{ class.endTime }}
+			{% endfor %}
+			</ul>
         </d1>
     </div>
 </body>
