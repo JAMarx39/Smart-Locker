@@ -2,6 +2,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+enrolled = db.Table('enrolled',
+    db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('class_id', db.Integer, db.ForeignKey('class.id'))
+)
+
 
 class UserType(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
@@ -18,6 +23,8 @@ class User(db.Model):
     firstName = db.Column(db.String(24), nullable=False)
     lastName = db.Column(db.String(24), nullable=False)
     userType = db.Column(db.CHAR, nullable=False)
+
+    classes = db.relationship('Class', backref='student')
 
     def __init__(self, username, password, firstName, lastName, userType):
         self.username = username
@@ -40,13 +47,18 @@ class Scanner(db.Model):
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(24), nullable=False)
+    code = db.Column(db.String(24), nullable=False)
     location = db.Column(db.String(24), nullable=True)
     teacherID = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     startTime = db.Column(db.String(24), nullable=False)
     endTime = db.Column(db.String(24), nullable=False)
 
-    def __init__(self, name, teacherID, startTime, endTime):
+    students = db.relationship('User', secondary=enrolled, backref=db.backref('enrolled_in', lazy='dynamic'),
+                               lazy='dynamic')
+
+    def __init__(self, name, code, teacherID, startTime, endTime):
         self.name = name
+        self.code = code
         self.teacherID = teacherID
         self.startTime = startTime
         self.endTime = endTime

@@ -25,11 +25,6 @@
 			<li><a href="{{ url_for('schedule') }}">Schedule</a></li>
 			<li><a class="active" href="{{ url_for('notifications') }}">Notifications</a></li>
 			<li><a href="{{ url_for('logout') }}">Log out</a></li>
-        {% elif user.userType == "t" %}
-			<li><a href="{{ url_for('schedule') }}">Schedule</a></li>
-			<li><a class="active" href="{{ url_for('notifications') }}">Classes</a></li>
-			<li><a href="{{ url_for('register_class') }}">Send Alert</a></li>
-			<li><a href="{{ url_for('logout') }}">Log out</a></li>
         {% elif user.userType == "a" %}
 			<li><a href="{{ url_for('register') }}">Register Teacher</a></li>
 			<li><a href="{{ url_for('register_class') }}">Register Class</a></li>

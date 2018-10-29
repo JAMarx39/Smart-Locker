@@ -79,5 +79,25 @@
 			</tr>
 		</table>
     </div>
+
+	<h2 align="center">Add a class</h2>
+	<div class="container">
+		<form class="form" action="" method="post">
+            <dl>
+              <dt>Course Code:
+              <dd><input type="text" name="code" size="30">
+            </dl>
+            <div class="actions"><input type="submit" value="Add Class"></div>
+        </form>
+	</div>
+
+	<div class="container">
+		Your classes:
+		<ul>
+		{% for class in classes %}
+		<li>{{ class.name }} ({{ class.code }}) : {{ class.startTime }} - {{ class.endTime }}
+		{% endfor %}
+		</ul>
+    </div>
 </body>
 </html>

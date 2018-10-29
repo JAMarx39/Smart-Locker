@@ -115,19 +115,43 @@ def items():
     return render_template("items.html", user=g.user, error=error, items=items)
 
 
-@app.route('/status')
+@app.route('/status', methods=["GET", "POST"])
 def status():
     return render_template("status.html", user=g.user)
 
 
-@app.route('/schedule')
+@app.route('/schedule', methods=["GET", "POST"])
 def schedule():
-    return render_template("schedule.html", user=g.user)
+    error = None
+    if request.method == 'POST':
+        error = None
+        if not request.form['code']:
+            error = 'You have to enter a course code'
+        else:
+            student = User.query.filter_by(id=session['user_id']).first()
+            course = Class.query.filter_by(code=request.form['code']).first()
+            if course is not None:
+                course.students.append(student)
+                student.classes.append(course)
+                db.session.commit()
+
+                flash('You successfully added a course')
+            else:
+                error = 'Not a valid course code'
+
+    student = User.query.filter_by(id=session['user_id']).first()
+    return render_template("schedule.html", user=g.user, error=error, classes=student.classes)
 
 
 @app.route('/notifications')
 def notifications():
     return render_template("notifications.html", user=g.user)
+
+
+@app.route('/classes')
+def classes():
+    classes = Class.query.filter_by(teacherID=session['user_id']).all()
+    return render_template("classes.html", user=g.user, classes=classes)
 
 
 @app.route('/register_class', methods=["GET", "POST"])
@@ -152,8 +176,8 @@ def register_class():
                 timeEnd = request.form['endHours'] + request.form['endHours']
                 if timeStart < timeEnd:
                     db.session.add(
-                        Class(name=request.form['className'], teacherID=teacher.id, startTime=timeStart,
-                              endTime=timeEnd))
+                        Class(name=request.form['className'], code=request.form['code'], teacherID=teacher.id,
+                              startTime=timeStart, endTime=timeEnd))
                     db.session.commit()
                     flash('You were successfully added a class')
                 else:
