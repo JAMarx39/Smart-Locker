@@ -2,8 +2,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-enrolled = db.Table('enrolled',
-    db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
+enrolled_in = db.Table('enrolled_in',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('class_id', db.Integer, db.ForeignKey('class.id'))
+)
+
+sent_to = db.Table('sent_to',
+    db.Column('messages_id', db.Integer, db.ForeignKey('messages.id')),
     db.Column('class_id', db.Integer, db.ForeignKey('class.id'))
 )
 
@@ -47,21 +52,24 @@ class Scanner(db.Model):
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(24), nullable=False)
-    code = db.Column(db.String(24), nullable=False)
     location = db.Column(db.String(24), nullable=True)
-    teacherID = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    code = db.Column(db.String(24), nullable=True)
+    teacherID = db.Column(db.Integer, nullable=False)
     startTime = db.Column(db.String(24), nullable=False)
     endTime = db.Column(db.String(24), nullable=False)
+    studentID = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
-    students = db.relationship('User', secondary=enrolled, backref=db.backref('enrolled_in', lazy='dynamic'),
-                               lazy='dynamic')
+    students = db.relationship('User', secondary='enrolled_in', backref=db.backref('student_in', lazy='dynamic'), lazy='dynamic')
 
-    def __init__(self, name, code, teacherID, startTime, endTime):
+    messages = db.relationship('Messages', secondary='sent_to', backref=db.backref('sent_from', lazy='dynamic'), lazy='dynamic')
+
+    def __init__(self, name, code, teacherID, startTime, endTime, studentID=0):
         self.name = name
         self.code = code
         self.teacherID = teacherID
         self.startTime = startTime
         self.endTime = endTime
+        self.studentID = studentID
 
 
 class Item(db.Model):
@@ -108,13 +116,10 @@ class Alert(db.Model):
 
 class Messages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    userID = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     message = db.Column(db.String(128), nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
-    itemID = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
+    code = db.Column(db.String(32), nullable=False)
+    time = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self):
-        self.userID = 0
-        self.message = ""
-        self.time = '1000-01-01 00:00:00.000000'
-        self.timeID = 0
+    def __init__(self, message, code):
+        self.message = message
+        self.code = code

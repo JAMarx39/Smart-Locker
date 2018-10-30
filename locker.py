@@ -149,7 +149,8 @@ def notifications():
     courses = student.classes
     messages = []
     for course in courses:
-        messages.append((course.messages, course.name))
+        for message in course.messages:
+            messages.append((message, course.name))
     return render_template("notifications.html", user=g.user, notifications=messages)
 
 
@@ -166,7 +167,7 @@ def classes():
             teacher = User.query.filter_by(id=session['user_id']).first()
             course = Class.query.filter_by(code=request.form['code']).first()
             if course.teacherID == teacher.id:
-                message = Messages(message=request.form['message'], course=course.id)
+                message = Messages(message=request.form['message'], code=course.code)
                 db.session.add(message)
                 course.messages.append(message)
                 db.session.commit()
