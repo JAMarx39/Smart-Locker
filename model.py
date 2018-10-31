@@ -94,10 +94,12 @@ class Pattern(db.Model):
     startTime = db.Column(db.String(130), nullable=False)
     presentItem = db.Column(db.String(52), nullable=False)
 
-    def __init__(self):
-        self.userID = 0
-        self.itemID = 0
-        self.dayOfWeek = ""
+    def __init__(self, userID, itemID, dayOfWeek, startTime, presentItems):
+        self.userID = userID
+        self.itemID = itemID
+        self.dayOfWeek = dayOfWeek
+        self.startTime = startTime
+        self.presentItem = presentItems
 
 
 class Alert(db.Model):
@@ -105,13 +107,17 @@ class Alert(db.Model):
     userID = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     itemID = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     message = db.Column(db.String(128), nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
+    dayOfWeek = db.Column(db.String(9), nullable=False)
+    time = db.Column(db.String(5), nullable=False)
+    status = db.Column(db.Integer, nullable=False)
 
-    def __init__(self):
-        self.userID = 0
-        self.itemID = 0
-        self.message = ""
-        self.time = '1000-01-01 00:00:00.000000'
+    def __init__(self, userID, itemID, message, dayOfWeek, time, status):
+        self.userID = userID
+        self.itemID = itemID
+        self.message = message
+        self.dayOfWeek = dayOfWeek
+        self.time = time
+        self.status = status
 
 
 class Messages(db.Model):

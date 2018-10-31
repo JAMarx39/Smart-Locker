@@ -17,7 +17,6 @@
 		{% if user %}
             <li><a class="active" href="{{ url_for('register') }}">Register Teacher</a></li>
 			<li><a href="{{ url_for('register_class') }}">Register Class</a></li>
-			<li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 			<li><a href="{{ url_for('logout') }}">Log out</a></li>
 		{% else %}
 			<li><a href="{{ url_for('login') }}">Log in</a></li>

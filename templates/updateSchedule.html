@@ -20,8 +20,13 @@
 			<li><a href="{{ url_for('register') }}">Create Account</a></li>
 		{% endif %}
         {% if user %}
-			<li><a href="{{ url_for('register') }}">Register Teacher</a></li>
-			<li><a class="active" href="{{ url_for('register_class') }}">Register Class</a></li>
+            <li><a href="{{ url_for('items') }}">Register items</a></li>
+            <li><a href="{{ url_for('status') }}">Item Status</a></li>
+			<li><a href="{{ url_for('alerts')}}">Handle Alarms</a>a></li>li>
+            <li><a class="active" href="{{ url_for('update_schedule')}}">Update Schedule</a>a></li>li>
+            <li><a href="{{ url_for('check_time_status')}}">Check Status</a>a></li>li>
+            <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+            <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 			<li><a href="{{ url_for('logout') }}">Log out</a></li>
 		{% endif %}
 	</ul>
@@ -41,12 +46,30 @@
     <div class="container">
         <form class="form" action="" method="post">
             <dl>
-              <dt>Class Name:
-              <dd><input type="text" name="className" size="30" value="">
-              <dt>Course Code:
-              <dd><input type="text" name="code" size="30">
-              <dt>Teacher username:
-              <dd><input type="text" name="teacherName" size="30">
+              <dt>Item:
+                <dd>
+                    <select name="item">
+                        {% for item in items %}
+                            <option value={{ item.id }}>{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </dd>
+              <dt> Item Status
+                  <dd>
+                    <select name="found">
+                        <option value="true">Present</option>
+                        <option value="false">Not Present</option>
+                    </select>
+                  </dd>
+              </dt>
+              <dt>Day of the Week:
+              <dd>
+                <input type="radio" name="dayOfWeek" value="Monday"> Monday <br>
+                <input type="radio" name="dayOfWeek" value="Tuesday"> Tuesday <br>
+                <input type="radio" name="dayOfWeek" value="Wednesday"> Wednesday <br>
+                <input type="radio" name="dayOfWeek" value="Thursday"> Thursday <br>
+                <input type="radio" name="dayOfWeek" value="Friday"> Friday <br>
+              </dd>
               <dt>Start Time:
                 <dd><select name="startHours">
                     <option value="07">07 (7am)</option>
@@ -76,35 +99,7 @@
                     <option value="50">50</option>
                     <option value="55">55</option>
                 </select>
-              <dt>End Time:
-                <dd><select name="endHours">
-                    <option value="07">07 (7am)</option>
-                    <option value="08">08 (8am)</option>
-                    <option value="09">09 (9am)</option>
-                    <option value="10">10 (10am)</option>
-                    <option value="11">11 (11am)</option>
-                    <option value="12">12 (12pm)</option>
-                    <option value="13">13 (1pm)</option>
-                    <option value="14">14 (2pm)</option>
-                    <option value="15">15 (3pm)</option>
-                    <option value="16">16 (4pm)</option>
-                    <option value="17">17 (5pm)</option>
-                </select>
-                :
-                <select name="endMinutes">
-                    <option value="00">00</option>
-                    <option value="05">05</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="35">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                    <option value="55">55</option>
-                </select>
+                </dd>
             </dl>
             <div class="actions"><input type="submit" value="Register Class"></div>
         </form>

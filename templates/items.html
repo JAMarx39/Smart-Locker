@@ -22,7 +22,10 @@
         {% if user %}
             <li><a class="active" href="{{ url_for('items') }}">Register items</a></li>
             <li><a href="{{ url_for('status') }}">Item Status</a></li>
-            <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+			<li><a href="{{ url_for('alerts')}}">Handle Alarms</a>a></li>li>
+            <li><a href="{{ url_for('update_schedule')}}">Update Schedule</a>a></li>li>
+            <li><a href="{{ url_for('check_time_status')}}">Check Status</a>a></li>li>
+			<li><a href="{{ url_for('schedule') }}">Schedule</a></li>
             <li><a href="{{ url_for('notifications') }}">Notifications</a></li>
 			<li><a href="{{ url_for('logout') }}">Log out</a></li>
 		{% endif %}

@@ -1,12 +1,10 @@
 import os
 from flask import Flask, request, session, url_for, redirect, render_template, abort, g, flash
 from werkzeug import check_password_hash, generate_password_hash
-from datetime import datetime
 
 app = Flask(__name__)
 
 from model import db, UserType, User, Scanner, Class, Item, Pattern, Alert, Messages
-
 
 SECRET_KEY = 'development key'
 
@@ -15,6 +13,12 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.root_path, 'model.db')
 app.config.from_object(__name__)
 
 db.init_app(app)
+
+scheduleTime = ["07:00"]
+schedulePresent = ["true"]
+
+defaultPatternTime = ['06:00']
+defaultPatternPresent = ['true']
 
 
 @app.cli.command('initdb')
@@ -110,6 +114,35 @@ def items():
             db.session.add(
                 Item(name=request.form['name'], tagID=request.form['rfidNum'], userID=session['user_id']))
             db.session.commit()
+            items = Item.query.filter_by(userID=session['user_id'], name=request.form['name'],
+                                         tagID=request.form['rfidNum']).first()
+
+            db.session.add(
+                Pattern(userID=session['user_id'], itemID=items.id, dayOfWeek='Monday',
+                        startTime=','.join(defaultPatternTime), presentItems=','.join(defaultPatternPresent))
+            )
+            db.session.add(
+                Pattern(userID=session['user_id'], itemID=items.id, dayOfWeek='Tuesday',
+                        startTime=','.join(defaultPatternTime), presentItems=','.join(defaultPatternPresent))
+            )
+            db.session.add(
+                Pattern(userID=session['user_id'], itemID=items.id, dayOfWeek='Wednesday',
+                        startTime=','.join(defaultPatternTime), presentItems=','.join(defaultPatternPresent))
+            )
+            db.session.add(
+                Pattern(userID=session['user_id'], itemID=items.id, dayOfWeek='Thursday',
+                        startTime=','.join(defaultPatternTime), presentItems=','.join(defaultPatternPresent))
+            )
+            db.session.add(
+                Pattern(userID=session['user_id'], itemID=items.id, dayOfWeek='Friday',
+                        startTime=','.join(defaultPatternTime), presentItems=','.join(defaultPatternPresent))
+            )
+
+            db.session.commit()
+            items2 = Pattern.query.filter_by(userID=session['user_id'], itemID=items.id).all()
+
+            for item in items2:
+                print(item.startTime)
             flash('You were successfully added an item')
     items = Item.query.filter_by(userID=session['user_id']).all()
     return render_template("items.html", user=g.user, error=error, items=items)
@@ -205,10 +238,167 @@ def register_class():
                     db.session.commit()
                     flash('You were successfully added a class')
                 else:
-                    error="The end time must be later than the start time"
+                    error = "The end time must be later than the start time"
             else:
-                error="That teacher username does not exist"
+                error = "That teacher username does not exist"
     return render_template("register_class.html", user=g.user, error=error)
+
+
+@app.route('/updateSchedule', methods=["GET", "POST"])
+def update_schedule():
+    error = None
+    items = Item.query.filter_by(userID=session['user_id']).all()
+
+    if request.method == "POST":
+
+        time = request.form["startHours"] + ":" + request.form["startMinutes"]
+
+        found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
+
+        if found >= 0:
+            schedulePresent[found] = request.form["found"]
+        else:
+            tempTime, tempPresent = updatePattern(scheduleTime, schedulePresent, request.form["found"], time)
+
+            start = 0
+
+            while start < len(tempTime):
+                scheduleTime[start] = tempTime[start]
+                schedulePresent[start] = tempPresent[start]
+                start = start + 1
+
+            print(scheduleTime)
+            print(schedulePresent)
+
+    return render_template("updateSchedule.html", error=error, items=items, user=g.user)
+
+
+@app.route('/checkStatus', methods=["GET", "POST"])
+def check_time_status():
+    error = None
+    items = Item.query.filter_by(userID=session['user_id']).all()
+
+    if request.method == "POST":
+
+        time = request.form["Hours"] + ":" + request.form["Minutes"]
+
+        found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
+
+        item = Item.query.filter_by(userID=session['user_id'], id=request.form['item']).all()
+        data = request.form["found"]
+
+        if found >= 0:
+            if data == schedulePresent[found]:
+                print("No Problem!")
+            else:
+                str = "Item " + item.name + " had a problem."
+                db.session.add(
+                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek="Monday",
+                          time=time, status=1)
+                )
+                db.session.commit()
+                print("The was a problem!")
+        else:
+            res = findSpot(scheduleTime, time)
+            print(res)
+            if data == schedulePresent[res]:
+                print("No Problem!")
+            else:
+                str = "Item " + request.form['item'] + " had a problem."
+                db.session.add(
+                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek="Monday",
+                          time=time, status=1)
+                )
+                db.session.commit()
+                print("The was a problem!")
+
+    return render_template("check.html", error=error, items=items, user=g.user)
+
+
+@app.route("/alerts", methods=["GET", "POST"])
+def alerts():
+    error = None
+    allAlerts = Alert.query.filter_by(userID=session['user_id']).all()
+    alertNotHandled = Alert.query.filter_by(userID=session['user_id'], status=1).all()
+    alertUserApproved = Alert.query.filter_by(userID=session['user_id'], status=2).all()
+    alertForConcern = Alert.query.filter_by(userID=session['user_id'], status=3).all()
+
+    if request.method == "POST":
+        alert = request.form['item']
+        status = request.form['found']
+
+        print(alert)
+        print(status)
+
+        alertUpdate = Alert.query.filter_by(id=alert).first()
+        alertUpdate.status = int(status)
+        db.session.commit()
+
+        allAlerts = Alert.query.filter_by(userID=session['user_id']).all()
+        alertNotHandled = Alert.query.filter_by(userID=session['user_id'], status=1).all()
+        alertUserApproved = Alert.query.filter_by(userID=session['user_id'], status=2).all()
+        alertForConcern = Alert.query.filter_by(userID=session['user_id'], status=3).all()
+
+    return render_template("alerts.html", error=error, allAlerts=allAlerts, alertNotHandled=alertNotHandled,
+                           alertUserApproved=alertUserApproved, alertForConcern=alertForConcern, user=g.user)
+
+
+def updatePattern(times, presentStatus, found, time):
+    i = 0
+    while i < len(times):
+        if i < len(times) - 2:
+            if times[i] <= time & times[i + 1] >= time:
+                times.insert(i + 1, time)
+                presentStatus.insert(i + 1, found)
+        else:
+            if time[i] <= time:
+                times.insert(i + 1, time)
+                presentStatus.insert(i + 1, found)
+
+        i += 1
+
+        return times, presentStatus
+
+
+def binarySearch(arr, l, r, x):
+    while l <= r:
+        mid = l + (r - l) // 2
+
+        if l == 0 & r == 0:
+            if arr[l] == x:
+                return l;
+            else:
+
+                return -1;
+
+        # Check if x is present at mid
+        if arr[mid] == x:
+            return mid
+        # If x is greater, ignore left half
+        elif arr[mid] < x:
+            l = mid + 1
+        # If x is smaller, ignore right half
+        else:
+            r = mid - 1
+
+    # If we reach here, then the element
+    # was not present
+    return -1
+
+
+def findSpot(inputArr, key):
+    start = 0
+
+    print(len(inputArr))
+    while start < len(inputArr):
+        if inputArr[start] < key:
+            if (start + 1) == len(inputArr):
+                return start
+            if inputArr[start + 1] > key:
+                return start
+        start = start + 1
+
+    return -1
 
 
 @app.route('/logout')
