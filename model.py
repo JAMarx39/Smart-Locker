@@ -24,6 +24,7 @@ class UserType(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(24), nullable=False)
+    email = db.Column(db.String(24), nullable=False)
     password = db.Column(db.String(64), nullable=False)
     firstName = db.Column(db.String(24), nullable=False)
     lastName = db.Column(db.String(24), nullable=False)
@@ -31,8 +32,9 @@ class User(db.Model):
 
     classes = db.relationship('Class', backref='student')
 
-    def __init__(self, username, password, firstName, lastName, userType):
+    def __init__(self, username, email, password, firstName, lastName, userType):
         self.username = username
+        self.email = email
         self.password = password
         self.firstName = firstName
         self.lastName = lastName

@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, session, url_for, redirect, render_template, abort, g, flash
 from werkzeug import check_password_hash, generate_password_hash
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 
@@ -11,6 +12,13 @@ SECRET_KEY = 'development key'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.root_path, 'model.db')
 
 app.config.from_object(__name__)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'Smart.Locker.Group.5@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Stuff9988'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 db.init_app(app)
 
@@ -26,7 +34,7 @@ def initdb_command():
     """Creates the database tables."""
     db.create_all()
     db.session.add(
-        User(username='ADMIN', password=generate_password_hash('ADMIN'),
+        User(username='ADMIN', email = 'A@A', password=generate_password_hash('ADMIN'),
              firstName='ADMIN', lastName='ADMIN', userType='a'))
     db.session.commit()
     print('Initialized the database.')
@@ -74,6 +82,9 @@ def register():
         error = None
         if not request.form['username']:
             error = 'You have to enter a username'
+        elif not request.form['email'] or \
+                        '@' not in request.form['email']:
+            error = 'You have to enter a valid email address'
         elif not request.form['fName']:
             error = 'You have to enter your first name'
         elif not request.form['lName']:
@@ -87,13 +98,15 @@ def register():
         else:
             if g.user:
                 db.session.add(
-                    User(username=request.form['username'], password=generate_password_hash(request.form['password']),
+                    User(username=request.form['username'], email=request.form['email'],
+                         password=generate_password_hash(request.form['password']),
                          firstName=request.form['fName'], lastName=request.form['lName'], userType='t'))
                 db.session.commit()
                 flash('You successfully created a teacher account')
             else:
                 db.session.add(
-                    User(username=request.form['username'], password=generate_password_hash(request.form['password']),
+                    User(username=request.form['username'], email=request.form['email'],
+                         password=generate_password_hash(request.form['password']),
                          firstName=request.form['fName'], lastName=request.form['lName'], userType='s'))
                 db.session.commit()
                 flash('You were successfully registered and can login now')
@@ -201,6 +214,7 @@ def classes():
             course = Class.query.filter_by(code=request.form['code']).first()
             if course.teacherID == teacher.id:
                 message = Messages(message=request.form['message'], code=course.code)
+                sendEmail(course, request.form['message'])
                 db.session.add(message)
                 course.messages.append(message)
                 db.session.commit()
@@ -343,6 +357,13 @@ def alerts():
                            alertUserApproved=alertUserApproved, alertForConcern=alertForConcern, user=g.user)
 
 
+@app.route('/logout')
+def logout():
+    flash('You were logged out')
+    session.pop('user_id', None)
+    return redirect(url_for('home'))
+
+
 def updatePattern(times, presentStatus, found, time):
     i = 0
     while i < len(times):
@@ -401,12 +422,11 @@ def findSpot(inputArr, key):
     return -1
 
 
-@app.route('/logout')
-def logout():
-    flash('You were logged out')
-    session.pop('user_id', None)
-    return redirect(url_for('home'))
-
+def sendEmail(course, message):
+    for student in course.students:
+        msg = Message('Message from ' + course.name, sender='Smart.Locker.Group.5@gmail.com', recipients=[student.email])
+        msg.body = message
+        mail.send(msg)
 
 if __name__ == '__main__':
     app.run(debug=True)
