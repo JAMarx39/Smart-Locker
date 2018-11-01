@@ -13,14 +13,6 @@ sent_to = db.Table('sent_to',
 )
 
 
-class UserType(db.Model):
-    ID = db.Column(db.Integer, primary_key=True)
-    userType = db.Column(db.String(24), nullable=False)
-
-    def __init__(self):
-        self.userType = ""
-
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(24), nullable=False)

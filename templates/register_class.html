@@ -46,7 +46,11 @@
               <dt>Course Code:
               <dd><input type="text" name="code" size="30">
               <dt>Teacher username:
-              <dd><input type="text" name="teacherName" size="30">
+              <dd><select name="teacherName">
+                        {% for teacher in teachers %}
+                            <option value={{ teacher.id }}>{{ teacher.username }}</option>
+                        {% endfor %}
+                    </select>
               <dt>Start Time:
                 <dd><select name="startHours">
                     <option value="07">07 (7am)</option>

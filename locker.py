@@ -255,7 +255,8 @@ def register_class():
                     error = "The end time must be later than the start time"
             else:
                 error = "That teacher username does not exist"
-    return render_template("register_class.html", user=g.user, error=error)
+    teachers = User.query.filter_by(userType='t').all()
+    return render_template("register_class.html", user=g.user, error=error, teachers=teachers)
 
 
 @app.route('/updateSchedule', methods=["GET", "POST"])
