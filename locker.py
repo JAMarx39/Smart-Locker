@@ -5,7 +5,7 @@ from flask_mail import Mail, Message
 
 app = Flask(__name__)
 
-from model import db, UserType, User, Scanner, Class, Item, Pattern, Alert, Messages
+from model import db, User, Scanner, Class, Item, Pattern, Alert, Messages
 
 SECRET_KEY = 'development key'
 
