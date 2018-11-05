@@ -48,43 +48,68 @@
         <tr>
         <td bgcolor="LightGray">
             <h4>All Unchecked Alerts</h4>
-                <ul>
+                <table>
                 {% for item in alertNotHandled %}
-                    <li>
-                        Message: {{ item.message }}
+                    <tr><td>
+                        <b>Alert ID:</b> {{ item.id }}
                         </br>
-                        Time: {{ item.time }}
-                    </li>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message: {{ item.message }}
+                        </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time: {{ item.time }}
+                        </br>
+                        {% for i in items %}
+                            {% if i.id == item.itemID %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item: {{ i.name }}
+                            {% endif %}
+                        {% endfor %}
+                    </td></tr>
                 {% endfor %}
-                </ul>
+                </table>
         </td>
         </tr>
         <tr>
         <td bgcolor="White">
         <h4>All Approved Alerts</h4>
-            <ul>
-            {% for item in alertUserApproved %}
-                <li>
-                    Message: {{ item.message }}
-                    </br>
-                    Time: {{ item.time }}
-                </li>
-            {% endfor %}
-            </ul>
+            <table>
+                {% for item in alertUserApproved %}
+                    <tr><td>
+                        <b>Alert ID:</b> {{ item.id }}
+                        </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message: {{ item.message }}
+                        </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time: {{ item.time }}
+                        </br>
+                        {% for i in items %}
+                            {% if i.id == item.itemID %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item: {{ i.name }}
+                            {% endif %}
+                        {% endfor %}
+                    </td></tr>
+                {% endfor %}
+                </table>
         </td>
         </tr>
         <tr>
         <td bgcolor="LightGray">
         <h4>All Concerning Alerts</h4>
-            <ul>
-            {% for item in alertForConcern %}
-                <li>
-                    Message: {{ item.message }}
-                    </br>
-                    Time: {{ item.time }}
-                </li>
-            {% endfor %}
-            </ul>
+            <table>
+                {% for item in alertForConcern %}
+                    <tr><td>
+                        <b>Alert ID:</b> {{ item.id }}
+                        </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message: {{ item.message }}
+                        </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time: {{ item.time }}
+                        </br>
+                        {% for i in items %}
+                            {% if i.id == item.itemID %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item: {{ i.name }}
+                            {% endif %}
+                        {% endfor %}
+                    </td></tr>
+                {% endfor %}
+                </table>
+        </td></tr>
         </table>
     </div>
 
@@ -94,7 +119,7 @@
                 <dt>Alert:
                     <select name="item">
                     {% for item in allAlerts %}
-                        <option value={{ item.id }}>{{ item.message }}</option>
+                        <option value={{ item.id }}>Alert: {{ item.id }}</option>
                     {% endfor %}
                     </select>
                 </dt>

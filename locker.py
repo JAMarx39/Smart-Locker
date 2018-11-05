@@ -319,7 +319,7 @@ def check_time_status():
             if data == schedulePresent[res]:
                 print("No Problem!")
             else:
-                str = "Item " + request.form['item'] + " had a problem."
+                str = "There was a problem."
                 db.session.add(
                     Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek="Monday",
                           time=time, status=1)
@@ -337,6 +337,7 @@ def alerts():
     alertNotHandled = Alert.query.filter_by(userID=session['user_id'], status=1).all()
     alertUserApproved = Alert.query.filter_by(userID=session['user_id'], status=2).all()
     alertForConcern = Alert.query.filter_by(userID=session['user_id'], status=3).all()
+    items = Item.query.filter_by(userID=session['user_id']).all()
 
     if request.method == "POST":
         alert = request.form['item']
@@ -353,9 +354,11 @@ def alerts():
         alertNotHandled = Alert.query.filter_by(userID=session['user_id'], status=1).all()
         alertUserApproved = Alert.query.filter_by(userID=session['user_id'], status=2).all()
         alertForConcern = Alert.query.filter_by(userID=session['user_id'], status=3).all()
+        items = Item.query.filter_by(userID=session['user_id']).all()
 
     return render_template("alerts.html", error=error, allAlerts=allAlerts, alertNotHandled=alertNotHandled,
-                           alertUserApproved=alertUserApproved, alertForConcern=alertForConcern, user=g.user)
+                           alertUserApproved=alertUserApproved, alertForConcern=alertForConcern, user=g.user,
+                           items=items)
 
 
 @app.route('/logout')

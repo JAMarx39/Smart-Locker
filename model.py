@@ -16,7 +16,7 @@ sent_to = db.Table('sent_to',
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(24), nullable=False)
-    email = db.Column(db.String(24), nullable=True)
+    email = db.Column(db.String(24), nullable=False)
     password = db.Column(db.String(64), nullable=False)
     firstName = db.Column(db.String(24), nullable=False)
     lastName = db.Column(db.String(24), nullable=False)
