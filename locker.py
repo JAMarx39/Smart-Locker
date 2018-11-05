@@ -361,6 +361,13 @@ def alerts():
                            items=items)
 
 
+@app.route("/rfidData", methods=["POST"])
+def handleRfidData():
+    if request.method == "POST":
+        data = request.form
+        print(data)
+
+
 @app.route('/logout')
 def logout():
     flash('You were logged out')
@@ -432,5 +439,6 @@ def sendEmail(course, message):
         msg.body = message
         mail.send(msg)
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='10.215.32.109', port='1234')
