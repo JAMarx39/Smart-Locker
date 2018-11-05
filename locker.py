@@ -163,7 +163,8 @@ def items():
 
 @app.route('/status', methods=["GET", "POST"])
 def status():
-    return render_template("status.html", user=g.user)
+    items = Item.query.filter_by(userID=session['user_id']).all()
+    return render_template("status.html", user=g.user, items=items)
 
 
 @app.route('/schedule', methods=["GET", "POST"])
