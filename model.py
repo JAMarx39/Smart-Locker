@@ -72,12 +72,14 @@ class Item(db.Model):
     name = db.Column(db.String(24), nullable=False)
     classID = db.Column(db.Integer, db.ForeignKey("class.id"), nullable=True)
     userID = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, name, tagID, userID):
+    def __init__(self, name, tagID, userID, status):
         self.name = name
         self.tagID = tagID
         self.classID = ""
         self.userID = userID
+        self.status = status
 
 
 class Pattern(db.Model):

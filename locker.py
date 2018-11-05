@@ -125,7 +125,7 @@ def items():
             error = 'You have to enter the RFID number'
         else:
             db.session.add(
-                Item(name=request.form['name'], tagID=request.form['rfidNum'], userID=session['user_id']))
+                Item(name=request.form['name'], tagID=request.form['rfidNum'], userID=session['user_id'], status=0))
             db.session.commit()
             items = Item.query.filter_by(userID=session['user_id'], name=request.form['name'],
                                          tagID=request.form['rfidNum']).first()
@@ -163,7 +163,8 @@ def items():
 
 @app.route('/status', methods=["GET", "POST"])
 def status():
-    return render_template("status.html", user=g.user)
+    items = Item.query.filter_by(userID=session['user_id']).all()
+    return render_template("status.html", user=g.user, items=items)
 
 
 @app.route('/schedule', methods=["GET", "POST"])

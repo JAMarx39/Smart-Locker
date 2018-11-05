@@ -44,6 +44,23 @@
     <div class="container">
         <d1>
             <dt>Items:</dt>
+            <dd>
+                <table>
+                    {% for item in items %}
+                        <tr>
+                        <td>
+                            {{ item.name }} : {{ item.tagID }}
+                            </br>
+                            {% if item.statu == 0 %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Status: Not Present
+                            {% else %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Status: Not Present
+                            {% endif %}
+                        </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </dd>
         </d1>
     </div>
 </body>
