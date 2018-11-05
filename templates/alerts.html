@@ -44,18 +44,24 @@
 	{% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
 
     <div class="container">
-        <h2>All Unchecked Alerts</h2>
-            <ul>
-            {% for item in alertNotHandled %}
-                <li>
-                    Message: {{ item.message }}
-                    </br>
-                    Time: {{ item.time }}
-                </li>
-            {% endfor %}
-            </ul>
-
-        <h2>All Approved Alerts</h2>
+        <table border="1">
+        <tr>
+        <td bgcolor="LightGray">
+            <h4>All Unchecked Alerts</h4>
+                <ul>
+                {% for item in alertNotHandled %}
+                    <li>
+                        Message: {{ item.message }}
+                        </br>
+                        Time: {{ item.time }}
+                    </li>
+                {% endfor %}
+                </ul>
+        </td>
+        </tr>
+        <tr>
+        <td bgcolor="White">
+        <h4>All Approved Alerts</h4>
             <ul>
             {% for item in alertUserApproved %}
                 <li>
@@ -65,9 +71,11 @@
                 </li>
             {% endfor %}
             </ul>
-
-
-        <h2>All Concerning Alerts</h2>
+        </td>
+        </tr>
+        <tr>
+        <td bgcolor="LightGray">
+        <h4>All Concerning Alerts</h4>
             <ul>
             {% for item in alertForConcern %}
                 <li>
@@ -77,6 +85,7 @@
                 </li>
             {% endfor %}
             </ul>
+        </table>
     </div>
 
     <div class="container">

@@ -424,7 +424,7 @@ def findSpot(inputArr, key):
 
 
 def sendEmail(course, message):
-    for student in course.students:
+     for student in course.students:
         msg = Message('Message from ' + course.name, sender='Smart.Locker.Group.5@gmail.com', recipients=[student.email])
         msg.body = message
         mail.send(msg)
