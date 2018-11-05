@@ -125,7 +125,7 @@ def items():
             error = 'You have to enter the RFID number'
         else:
             db.session.add(
-                Item(name=request.form['name'], tagID=request.form['rfidNum'], userID=session['user_id']))
+                Item(name=request.form['name'], tagID=request.form['rfidNum'], userID=session['user_id'], status=0))
             db.session.commit()
             items = Item.query.filter_by(userID=session['user_id'], name=request.form['name'],
                                          tagID=request.form['rfidNum']).first()
