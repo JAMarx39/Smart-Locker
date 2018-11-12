@@ -264,10 +264,21 @@ def register_class():
 def update_schedule():
     error = None
     items = Item.query.filter_by(userID=session['user_id']).all()
+    schedules = Pattern.query.filter_by(userID=session['user_id']).all()
+    for pat in schedules:
+        print(pat.dayOfWeek)
 
     if request.method == "POST":
 
         time = request.form["startHours"] + ":" + request.form["startMinutes"]
+
+        pattern = Pattern.query.filter_by(userID=session['user_id'], itemID=request.form["item"], dayOfWeek=request.form["dayOfWeek"]).first()
+
+        scheduleTime = pattern.startTime.split(",")
+        schedulePresent = pattern.presentItem.split(",")
+
+        print(scheduleTime)
+        print(schedulePresent)
 
         found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
 
@@ -286,7 +297,13 @@ def update_schedule():
             print(scheduleTime)
             print(schedulePresent)
 
-    return render_template("updateSchedule.html", error=error, items=items, user=g.user)
+        pattern.startTime = ','.join(scheduleTime)
+        pattern.presentItem = ','.join(schedulePresent)
+        db.session.commit()
+
+        schedules = Pattern.query.filter_by(userID=session['user_id']).all()
+
+    return render_template("updateSchedule.html", error=error, items=items, user=g.user, schedules=schedules)
 
 
 @app.route('/checkStatus', methods=["GET", "POST"])

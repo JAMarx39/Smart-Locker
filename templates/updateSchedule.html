@@ -43,7 +43,9 @@
 
 	{% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
 
-    <div class="container">
+    <div style="padding:0 16px;"  class="container-fluid">
+        <div class="row">
+		<div class="col-md-6" id="aboutleft">
         <form class="form" action="" method="post">
             <dl>
               <dt>Item:
@@ -103,6 +105,56 @@
             </dl>
             <div class="actions"><input type="submit" value="Register Class"></div>
         </form>
+        </div>
+        <div class="col-md-6" id="aboutright">
+            {% for item in items %}
+                <table style="padding:0px" border="1">
+                    <tr>
+                        <td width="100%"><b>{{ item.name }}</b></td>
+                    </tr>
+                </table>
+                        {% for sch in schedules %}
+                            <table width="100%" frame="hsides">
+                            {% if sch.itemID == item.id %}
+                                {% set list1 = sch.startTime.split(',') %}
+                                {% set list2 = sch.presentItem.split(',') %}
+                                <tr width="100%">
+                                    <td colspan={{ list1|length + 1 }}, style="padding:0px" bgcolor="LightGray">{{ sch.dayOfWeek }}</td>
+                                </tr>
+                                <tr width="100%">
+                                    <td style="padding:0px">Time</td>
+                                    {% for i in list1 %}
+                                        <td style="padding:0px">
+                                            <div style= "border: solid 0; border-left-width:2px; padding-left:0.5ex">
+                                                {{ i }}
+                                            </div>
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                                <tr width="100%">
+                                    <td style="padding:0px">Item Status</td>
+                                    {% for i in list2 %}
+                                        {% if i == "true" %}
+                                            <td style="padding:0px">
+                                                <div style= "border: solid 0; border-left-width:2px; padding-left:0.5ex">
+                                                    Present
+                                                </div>
+                                            </td>
+                                         {% else %}
+                                            <td style="padding:0px">
+                                                <div style= "border: solid 0; border-left-width:2px; padding-left:0.5ex">
+                                                    Not Present
+                                                </div>
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
+                            </table>
+                        {% endfor %}
+            {% endfor %}
+		</div>
+        </div>
     </div>
 </body>
 </html>
