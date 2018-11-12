@@ -281,6 +281,7 @@ def update_schedule():
         print(schedulePresent)
 
         found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
+        print(found)
 
         if found >= 0:
             schedulePresent[found] = request.form["found"]
@@ -368,6 +369,12 @@ def alerts():
         alertUpdate.status = int(status)
         db.session.commit()
 
+        if status == 2:
+            counting = Alert.query.filter_by(userID=session['user_id'], itemID=alertUpdate.itemID,
+                                             dayOfWeek=alertUpdate.dayOfWeek, time=alertUpdate.time,
+                                             status=alertUpdate.status).all()
+            print(len(counting))
+
         allAlerts = Alert.query.filter_by(userID=session['user_id']).all()
         alertNotHandled = Alert.query.filter_by(userID=session['user_id'], status=1).all()
         alertUserApproved = Alert.query.filter_by(userID=session['user_id'], status=2).all()
@@ -390,7 +397,7 @@ def updatePattern(times, presentStatus, found, time):
     i = 0
     while i < len(times):
         if i < len(times) - 2:
-            if times[i] <= time & times[i + 1] >= time:
+            if (times[i] < time) and (times[i + 1] > time):
                 times.insert(i + 1, time)
                 presentStatus.insert(i + 1, found)
         else:
@@ -406,13 +413,14 @@ def updatePattern(times, presentStatus, found, time):
 def binarySearch(arr, l, r, x):
     while l <= r:
         mid = l + (r - l) // 2
-
-        if l == 0 & r == 0:
+        print(arr[l])
+        print(r)
+        print(x)
+        if l == 0 and r == 0:
             if arr[l] == x:
-                return l;
+                return l
             else:
-
-                return -1;
+                return -1
 
         # Check if x is present at mid
         if arr[mid] == x:
