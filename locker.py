@@ -386,6 +386,20 @@ def alerts():
                            items=items)
 
 
+@app.route("/rfidData", methods=["POST"])
+def handleRfidData():
+    if request.method == "POST":
+        data = request.form['rfid']
+        data = data[1:13]
+        item = Item.query.filter_by(tagID=data).first()
+        if item.status == 0:
+            item.status = 1
+        else:
+            item.status = 0
+        db.session.commit()
+    return redirect(url_for('home'))
+
+
 @app.route('/logout')
 def logout():
     flash('You were logged out')
@@ -458,5 +472,8 @@ def sendEmail(course, message):
         msg.body = message
         mail.send(msg)
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    #10.215.32.109
+    #192.168.1.101
+    app.run(host='192.168.1.101', port='1234')
