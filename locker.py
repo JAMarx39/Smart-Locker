@@ -318,7 +318,7 @@ def check_time_status():
 
         found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
 
-        item = Item.query.filter_by(userID=session['user_id'], id=request.form['item']).all()
+        item = Item.query.filter_by(userID=session['user_id'], id=request.form['item']).first()
         data = request.form["found"]
 
         if found >= 0:
