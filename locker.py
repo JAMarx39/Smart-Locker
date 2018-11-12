@@ -365,7 +365,7 @@ def alerts():
 @app.route("/rfidData", methods=["POST"])
 def handleRfidData():
     if request.method == "POST":
-        data = request.form
+        data = request.form['rfid']
         print(data)
 
 
@@ -442,4 +442,6 @@ def sendEmail(course, message):
 
 
 if __name__ == '__main__':
-    app.run(host='10.215.32.109', port='1234')
+    #10.215.32.109
+    #192.168.1.101
+    app.run(host='127.0.0.1', port='1234')
