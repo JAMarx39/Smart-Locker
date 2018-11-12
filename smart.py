@@ -2,8 +2,8 @@ import socket
 import threading
 import requests
 
-#bind_ip = '192.168.1.101'
-bind_ip = '127.0.0.1'
+bind_ip = '192.168.1.101'
+# bind_ip = '127.0.0.1'
 bind_port = 5005
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,9 +17,10 @@ print('Listening on {', bind_ip, '}:{', bind_port, '}')
 def handle_client_connection(client_socket):
     request = client_socket.recv(4096)
     print('Received {', request, '}')
+    print(request.decode())
     requests.post("http://"+bind_ip+":1234/rfidData", data={'rfid': request})
     # request should be b'\x5500529BD24E\r'  where 5500529BD24E is the rfid
-    client_socket.send('ACK!'.encode('UTF-8'))
+    # client_socket.send('ACK!'.encode('UTF-8'))
     client_socket.close()
 
 

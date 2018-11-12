@@ -383,7 +383,14 @@ def alerts():
 def handleRfidData():
     if request.method == "POST":
         data = request.form['rfid']
-        print(data)
+        data = data[1:13]
+        item = Item.query.filter_by(tagID=data).first()
+        if item.status == 0:
+            item.status = 1
+        else:
+            item.status = 0
+        db.session.commit()
+    return redirect(url_for('home'))
 
 
 @app.route('/logout')
@@ -461,4 +468,4 @@ def sendEmail(course, message):
 if __name__ == '__main__':
     #10.215.32.109
     #192.168.1.101
-    app.run(host='127.0.0.1', port='1234')
+    app.run(host='192.168.1.101', port='1234')
