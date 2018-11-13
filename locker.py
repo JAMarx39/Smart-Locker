@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, session, url_for, redirect, render_template, abort, g, flash
 from werkzeug import check_password_hash, generate_password_hash
 from flask_mail import Mail, Message
+import datetime
 
 app = Flask(__name__)
 
@@ -28,6 +29,7 @@ schedulePresent = ["true"]
 defaultPatternTime = ['06:00']
 defaultPatternPresent = ['true']
 
+weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
 @app.cli.command('initdb')
 def initdb_command():
@@ -315,6 +317,13 @@ def check_time_status():
     if request.method == "POST":
 
         time = request.form["Hours"] + ":" + request.form["Minutes"]
+        day = request.form["dayOfWeek"]
+
+        pattern = Pattern.query.filter_by(userID=session['user_id'], itemID=request.form["item"],
+                                          dayOfWeek=request.form["dayOfWeek"]).first()
+
+        scheduleTime = pattern.startTime.split(",")
+        schedulePresent = pattern.presentItem.split(",")
 
         found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
 
@@ -325,9 +334,12 @@ def check_time_status():
             if data == schedulePresent[found]:
                 print("No Problem!")
             else:
-                str = "Item " + item.name + " had a problem."
+                if data == "true":
+                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                else:
+                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
                 db.session.add(
-                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek="Monday",
+                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek=day,
                           time=time, status=1)
                 )
                 db.session.commit()
@@ -338,9 +350,12 @@ def check_time_status():
             if data == schedulePresent[res]:
                 print("No Problem!")
             else:
-                str = "There was a problem."
+                if data == "true":
+                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                else:
+                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
                 db.session.add(
-                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek="Monday",
+                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek=day,
                           time=time, status=1)
                 )
                 db.session.commit()
@@ -369,11 +384,50 @@ def alerts():
         alertUpdate.status = int(status)
         db.session.commit()
 
-        if status == 2:
-            counting = Alert.query.filter_by(userID=session['user_id'], itemID=alertUpdate.itemID,
-                                             dayOfWeek=alertUpdate.dayOfWeek, time=alertUpdate.time,
-                                             status=alertUpdate.status).all()
-            print(len(counting))
+        counting = Alert.query.filter_by(userID=session['user_id'], itemID=alertUpdate.itemID,
+                                         dayOfWeek=alertUpdate.dayOfWeek, time=alertUpdate.time,
+                                         status=alertUpdate.status).all()
+        print(len(counting))
+
+        if len(counting) >= 3:
+            print("Updating Schedule...")
+            flash('Schedule was Updated.  Go to Schedule Page to see the new version.')
+            pattern = Pattern.query.filter_by(userID=session['user_id'], itemID=alertUpdate.itemID,
+                                              dayOfWeek=alertUpdate.dayOfWeek).first()
+
+            scheduleTime = pattern.startTime.split(",")
+            schedulePresent = pattern.presentItem.split(",")
+
+            print(scheduleTime)
+            print(schedulePresent)
+
+            found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, alertUpdate.time)
+            print(found)
+
+            f2 = "false"
+            if "missing" not in alertUpdate.message:
+                f2 = "true"
+            else:
+                f2 = "false"
+
+            if found >= 0:
+                schedulePresent[found] = f2
+            else:
+                tempTime, tempPresent = updatePattern(scheduleTime, schedulePresent, f2, alertUpdate.time)
+
+                start = 0
+
+                while start < len(tempTime):
+                    scheduleTime[start] = tempTime[start]
+                    schedulePresent[start] = tempPresent[start]
+                    start = start + 1
+
+                print(scheduleTime)
+                print(schedulePresent)
+
+                pattern.startTime = ','.join(scheduleTime)
+                pattern.presentItem = ','.join(schedulePresent)
+                db.session.commit()
 
         allAlerts = Alert.query.filter_by(userID=session['user_id']).all()
         alertNotHandled = Alert.query.filter_by(userID=session['user_id'], status=1).all()
@@ -397,6 +451,54 @@ def handleRfidData():
         else:
             item.status = 0
         db.session.commit()
+
+        day = weekdays[datetime.datetime.today().weekday()]
+        print(day)
+
+        time = datetime.datetime.now().hour + ":" + datetime.datetime.now().minute
+
+        pattern = Pattern.query.filter_by(itemID=item.id, dayOfWeek=day).first()
+
+        scheduleTime = pattern.startTime.split(",")
+        schedulePresent = pattern.presentItem.split(",")
+
+        print(scheduleTime)
+        print(schedulePresent)
+
+        found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
+        print(found)
+
+        if found >= 0:
+            if item.status == schedulePresent[found]:
+                print("No Problem!")
+            else:
+                if item.status == "true":
+                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                else:
+                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                db.session.add(
+                    Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
+                          time=time, status=1)
+                )
+                db.session.commit()
+                print("The was a problem!")
+        else:
+            res = findSpot(scheduleTime, time)
+            print(res)
+            if item.status == schedulePresent[res]:
+                print("No Problem!")
+            else:
+                if item.status == "true":
+                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                else:
+                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                db.session.add(
+                    Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
+                          time=time, status=1)
+                )
+                db.session.commit()
+                print("The was a problem!")
+
     return redirect(url_for('home'))
 
 
