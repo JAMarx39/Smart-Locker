@@ -216,8 +216,8 @@ def classes():
             if course.teacherID == teacher.id:
                 message = Messages(message=request.form['message'], code=course.code)
                 sendEmail(course, request.form['message'])
-                db.session.add(message)
                 course.messages.append(message)
+                db.session.add(message)
                 db.session.commit()
                 flash('You successfully sent an alert')
             else:
