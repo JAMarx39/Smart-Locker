@@ -338,12 +338,13 @@ def check_time_status():
                     str = "Item " + item.name + " had a problem.  You needed it for class."
                 else:
                     str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                sendEmailAlert(str)
                 db.session.add(
                     Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek=day,
                           time=time, status=1)
                 )
                 db.session.commit()
-                print("The was a problem!")
+                print("There was a problem!")
         else:
             res = findSpot(scheduleTime, time)
             print(res)
@@ -354,12 +355,13 @@ def check_time_status():
                     str = "Item " + item.name + " had a problem.  You needed it for class."
                 else:
                     str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                sendEmailAlert(str)
                 db.session.add(
                     Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek=day,
                           time=time, status=1)
                 )
                 db.session.commit()
-                print("The was a problem!")
+                print("There was a problem!")
 
     return render_template("check.html", error=error, items=items, user=g.user)
 
@@ -575,7 +577,14 @@ def sendEmail(course, message):
         mail.send(msg)
 
 
+def sendEmailAlert(alert):
+    msg = Message('Alert from Smart Locker', sender='Smart.Locker.Group.5@gmail.com',
+                  recipients=[g.user.email])
+    msg.body = alert
+    mail.send(msg)
+
+
 if __name__ == '__main__':
     #10.215.32.109
     #192.168.1.101
-    app.run(host='192.168.1.101', port='1234')
+    app.run(host='127.0.0.1', port='1234')
