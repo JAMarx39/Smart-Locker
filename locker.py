@@ -334,12 +334,12 @@ def check_time_status():
                 print("No Problem!")
             else:
                 if data == "true":
-                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                    str1 = "Item " + item.name + " had a problem.  You needed it for class."
                 else:
-                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                    str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
                 sendEmailAlert(str)
                 db.session.add(
-                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek=day,
+                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str1, dayOfWeek=day,
                           time=time, status=1)
                 )
                 db.session.commit()
@@ -351,12 +351,12 @@ def check_time_status():
                 print("No Problem!")
             else:
                 if data == "true":
-                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                    str1 = "Item " + item.name + " had a problem.  You needed it for class."
                 else:
-                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                    str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
                 sendEmailAlert(str)
                 db.session.add(
-                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str, dayOfWeek=day,
+                    Alert(userID=session['user_id'], itemID=request.form['item'], message=str1, dayOfWeek=day,
                           time=time, status=1)
                 )
                 db.session.commit()
@@ -457,7 +457,7 @@ def handleRfidData():
             day = weekdays[datetime.datetime.today().weekday()]
             print(day)
 
-            time = datetime.datetime.now().hour + ":" + datetime.datetime.now().minute
+            time = str(datetime.datetime.now().hour) + ":" + str(datetime.datetime.now().minute)
 
             pattern = Pattern.query.filter_by(itemID=item.id, dayOfWeek=day).first()
 
@@ -470,16 +470,21 @@ def handleRfidData():
             found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
             print(found)
 
+            if item.status == 0:
+                stat = 'false'
+            else:
+                stat='true'
+
             if found >= 0:
-                if item.status == schedulePresent[found]:
+                if stat == schedulePresent[found]:
                     print("No Problem!")
                 else:
-                    if item.status == "true":
-                        str = "Item " + item.name + " had a problem.  You needed it for class."
+                    if item.status == 0:
+                        str1 = "Item " + item.name + " had a problem.  You needed it for class."
                     else:
-                        str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                        str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
                     db.session.add(
-                        Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
+                        Alert(userID=item.userID, itemID=item.id, message=str1, dayOfWeek=day,
                               time=time, status=1)
                     )
                     db.session.commit()
@@ -490,12 +495,12 @@ def handleRfidData():
                 if item.status == schedulePresent[res]:
                     print("No Problem!")
                 else:
-                    if item.status == "true":
-                        str = "Item " + item.name + " had a problem.  You needed it for class."
+                    if item.status == 1:
+                        str1 = "Item " + item.name + " had a problem.  You needed it for class."
                     else:
-                        str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                        str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
                     db.session.add(
-                        Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
+                        Alert(userID=item.userID, itemID=item.id, message=str1, dayOfWeek=day,
                               time=time, status=1)
                     )
                     db.session.commit()
