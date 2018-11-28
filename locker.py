@@ -267,8 +267,6 @@ def update_schedule():
     error = None
     items = Item.query.filter_by(userID=session['user_id']).all()
     schedules = Pattern.query.filter_by(userID=session['user_id']).all()
-    for pat in schedules:
-        print(pat.dayOfWeek)
 
     if request.method == "POST":
 
@@ -281,6 +279,7 @@ def update_schedule():
 
         print(scheduleTime)
         print(schedulePresent)
+        print(time)
 
         found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
         print(found)
@@ -513,19 +512,33 @@ def logout():
 
 def updatePattern(times, presentStatus, found, time):
     i = 0
+
+    spot = 0;
     while i < len(times):
         if i < len(times) - 2:
             if (times[i] < time) and (times[i + 1] > time):
+                print("check two items")
+                print(times[i])
+                print(time)
+                print(times[i+1])
+                print(times[i] < time)
+                print(times[i + 1] > time)
                 times.insert(i + 1, time)
                 presentStatus.insert(i + 1, found)
         else:
-            if time[i] <= time:
-                times.insert(i + 1, time)
-                presentStatus.insert(i + 1, found)
+            if times[i] < time:
+                print("check one item")
+                print(times[i])
+                print(time)
+                print(times[i] <= time)
+                spot = i + 1
 
-        i += 1
+        i = i + 1
+        print(i)
 
-        return times, presentStatus
+    times.insert(spot, time)
+    presentStatus.insert(spot, found)
+    return times, presentStatus
 
 
 def binarySearch(arr, l, r, x):

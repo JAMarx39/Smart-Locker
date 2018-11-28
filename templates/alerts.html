@@ -55,6 +55,8 @@
                         </br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message: {{ item.message }}
                         </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Day: {{ item.dayOfWeek }}
+                        </br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time: {{ item.time }}
                         </br>
                         {% for i in items %}
@@ -77,6 +79,8 @@
                         </br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message: {{ item.message }}
                         </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Day: {{ item.dayOfWeek }}
+                        </br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time: {{ item.time }}
                         </br>
                         {% for i in items %}
@@ -84,6 +88,7 @@
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item: {{ i.name }}
                             {% endif %}
                         {% endfor %}
+
                     </td></tr>
                 {% endfor %}
                 </table>
@@ -98,6 +103,8 @@
                         <b>Alert ID:</b> {{ item.id }}
                         </br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Message: {{ item.message }}
+                        </br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Day: {{ item.dayOfWeek }}
                         </br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time: {{ item.time }}
                         </br>
