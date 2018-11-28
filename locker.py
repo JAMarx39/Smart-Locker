@@ -26,7 +26,7 @@ db.init_app(app)
 scheduleTime = ["07:00"]
 schedulePresent = ["true"]
 
-defaultPatternTime = ['06:00']
+defaultPatternTime = ['07:00']
 defaultPatternPresent = ['true']
 
 weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
