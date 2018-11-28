@@ -473,7 +473,7 @@ def handleRfidData():
             if item.status == 0:
                 stat = 'false'
             else:
-                stat='true'
+                stat = 'true'
 
             if found >= 0:
                 if stat == schedulePresent[found]:
@@ -492,7 +492,7 @@ def handleRfidData():
             else:
                 res = findSpot(scheduleTime, time)
                 print(res)
-                if item.status == schedulePresent[res]:
+                if stat == schedulePresent[res]:
                     print("No Problem!")
                 else:
                     if item.status == 1:
