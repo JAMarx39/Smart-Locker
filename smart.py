@@ -4,6 +4,8 @@ import requests
 
 bind_ip = '192.168.1.101'
 # bind_ip = '127.0.0.1'
+# bind_ip = '100.118.25.75'
+# bind_ip = '10.215.39.190'
 bind_port = 5005
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

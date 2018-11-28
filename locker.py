@@ -448,58 +448,59 @@ def handleRfidData():
         data = request.form['rfid']
         data = data[1:13]
         item = Item.query.filter_by(tagID=data).first()
-        if item.status == 0:
-            item.status = 1
-        else:
-            item.status = 0
-        db.session.commit()
-
-        day = weekdays[datetime.datetime.today().weekday()]
-        print(day)
-
-        time = datetime.datetime.now().hour + ":" + datetime.datetime.now().minute
-
-        pattern = Pattern.query.filter_by(itemID=item.id, dayOfWeek=day).first()
-
-        scheduleTime = pattern.startTime.split(",")
-        schedulePresent = pattern.presentItem.split(",")
-
-        print(scheduleTime)
-        print(schedulePresent)
-
-        found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
-        print(found)
-
-        if found >= 0:
-            if item.status == schedulePresent[found]:
-                print("No Problem!")
+        if item is not None:
+            if item.status == 0:
+                item.status = 1
             else:
-                if item.status == "true":
-                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                item.status = 0
+            db.session.commit()
+
+            day = weekdays[datetime.datetime.today().weekday()]
+            print(day)
+
+            time = datetime.datetime.now().hour + ":" + datetime.datetime.now().minute
+
+            pattern = Pattern.query.filter_by(itemID=item.id, dayOfWeek=day).first()
+
+            scheduleTime = pattern.startTime.split(",")
+            schedulePresent = pattern.presentItem.split(",")
+
+            print(scheduleTime)
+            print(schedulePresent)
+
+            found = binarySearch(scheduleTime, 0, len(scheduleTime) - 1, time)
+            print(found)
+
+            if found >= 0:
+                if item.status == schedulePresent[found]:
+                    print("No Problem!")
                 else:
-                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
-                db.session.add(
-                    Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
-                          time=time, status=1)
-                )
-                db.session.commit()
-                print("The was a problem!")
-        else:
-            res = findSpot(scheduleTime, time)
-            print(res)
-            if item.status == schedulePresent[res]:
-                print("No Problem!")
+                    if item.status == "true":
+                        str = "Item " + item.name + " had a problem.  You needed it for class."
+                    else:
+                        str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                    db.session.add(
+                        Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
+                              time=time, status=1)
+                    )
+                    db.session.commit()
+                    print("The was a problem!")
             else:
-                if item.status == "true":
-                    str = "Item " + item.name + " had a problem.  You needed it for class."
+                res = findSpot(scheduleTime, time)
+                print(res)
+                if item.status == schedulePresent[res]:
+                    print("No Problem!")
                 else:
-                    str = "Item " + item.name + " had a problem.  It is missing from the locker."
-                db.session.add(
-                    Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
-                          time=time, status=1)
-                )
-                db.session.commit()
-                print("The was a problem!")
+                    if item.status == "true":
+                        str = "Item " + item.name + " had a problem.  You needed it for class."
+                    else:
+                        str = "Item " + item.name + " had a problem.  It is missing from the locker."
+                    db.session.add(
+                        Alert(userID=session['user_id'], itemID=item.id, message=str, dayOfWeek=day,
+                              time=time, status=1)
+                    )
+                    db.session.commit()
+                    print("The was a problem!")
 
     return redirect(url_for('home'))
 
@@ -585,6 +586,9 @@ def sendEmailAlert(alert):
 
 
 if __name__ == '__main__':
-    #10.215.32.109
-    #192.168.1.101
-    app.run(host='127.0.0.1', port='1234')
+    # ip = '10.215.39.190'
+    ip = '192.168.1.101'
+    # ip = '127.0.0.1'
+    # ip = '192.168.137.1'
+    # ip = '100.118.25.75'
+    app.run(host=ip, port='1234')
