@@ -337,7 +337,7 @@ def check_time_status():
                     str1 = "Item " + item.name + " had a problem.  You needed it for class."
                 else:
                     str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
-                sendEmailAlert(str)
+                sendEmailAlert(str1)
                 db.session.add(
                     Alert(userID=session['user_id'], itemID=request.form['item'], message=str1, dayOfWeek=day,
                           time=time, status=1)
@@ -354,7 +354,7 @@ def check_time_status():
                     str1 = "Item " + item.name + " had a problem.  You needed it for class."
                 else:
                     str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
-                sendEmailAlert(str)
+                sendEmailAlert(str1)
                 db.session.add(
                     Alert(userID=session['user_id'], itemID=request.form['item'], message=str1, dayOfWeek=day,
                           time=time, status=1)
@@ -483,6 +483,8 @@ def handleRfidData():
                         str1 = "Item " + item.name + " had a problem.  You needed it for class."
                     else:
                         str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
+                    recip = User.query.filter_by(id=item.userID).first()
+                    # sendEmailAlert(str1, recip)
                     db.session.add(
                         Alert(userID=item.userID, itemID=item.id, message=str1, dayOfWeek=day,
                               time=time, status=1)
@@ -499,6 +501,8 @@ def handleRfidData():
                         str1 = "Item " + item.name + " had a problem.  You needed it for class."
                     else:
                         str1 = "Item " + item.name + " had a problem.  It is missing from the locker."
+                    recip = User.query.filter_by(id=item.userID).first()
+                    # sendEmailAlert(str1, recip)
                     db.session.add(
                         Alert(userID=item.userID, itemID=item.id, message=str1, dayOfWeek=day,
                               time=time, status=1)
@@ -596,17 +600,16 @@ def sendEmail(course, message):
         mail.send(msg)
 
 
-def sendEmailAlert(alert):
+def sendEmailAlert(alert, recip=None):
+    if recip is None:
+        recip = g.user
     msg = Message('Alert from Smart Locker', sender='Smart.Locker.Group.5@gmail.com',
-                  recipients=[g.user.email])
+                  recipients=[recip.email])
     msg.body = alert
     mail.send(msg)
 
 
 if __name__ == '__main__':
-    # ip = '10.215.39.190'
-    ip = '192.168.1.101'
-    # ip = '127.0.0.1'
-    # ip = '192.168.137.1'
-    # ip = '100.118.25.75'
+    ip = '127.0.0.1'
+    # ip = '192.168.43.46'
     app.run(host=ip, port='1234')
